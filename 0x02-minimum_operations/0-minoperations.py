@@ -6,22 +6,25 @@ needed to result in exactly `n` `H` characters in the file.
 
 
 def minOperations(n):
+    """
+    Returns an integer
+    If `n` is impossible to achieve, return `0`
+    """
     if n <= 1:
         return 0  # It's already there or impossible
 
-    # Initialize an array to store the minimum operations for each position
-    dp = [float('inf')] * (n + 1)
+    initial = 1
+    begin = 0
+    count = 0
 
-    # Base case: It takes 0 operations to have 1 'H'
-    dp[1] = 0
-
-    # Iterate through all positions up to n
-    for i in range(2, n + 1):
-        # Iterate through all possible lengths of the copy buffer
-        for j in range(1, i):
-            # the length of the copy buffer evenly divides the current position
-            if i % j == 0:
-                # pasting = minimum of current cost & cost of copying + pasting
-                dp[i] = min(dp[i], dp[j] + i // j)
-
-    return dp[n] if dp[n] != float('inf') else 0
+    #when the intial value is less than n
+    while initial < n:
+        left = n - initial
+        if (left % initial == 0):
+            begin = initial
+            initial += begin
+            count += 2
+        else:
+            initial += begin
+            count += 1
+    return count
