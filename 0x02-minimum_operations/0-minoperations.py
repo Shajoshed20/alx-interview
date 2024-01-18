@@ -17,7 +17,7 @@ def minOperations(n):
     begin = 0
     count = 0
 
-    #when the intial value is less than n
+    # When the intial value is less than n
     while initial < n:
         left = n - initial
         if (left % initial == 0):
