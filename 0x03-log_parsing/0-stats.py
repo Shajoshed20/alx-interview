@@ -9,47 +9,39 @@ def print_statistics(total_size, status_codes):
     This function prints the total file size and
     the number of lines for each status code.
     """
-    print(f'Total file size: {total_size}')
-    for code in sorted(status_codes):
-        print(f'{code}: {status_codes[code]}')
+    print("File size: {:d}".format(status_codes))
+    for i in sorted(total_size.keys()):
+        if total_size[i] != 0:
+            print("{}: {:d}".format(i, total_size[i]))
 
 
-def process_line(line, total_size, status_codes):
-    """Process a single line from the input stream."""
-    try:
-        parts = line.split()
-        size = int(parts[-1])
-        status_code = int(parts[-2])
+stat_code_dict = {"200": 0, "301": 0, "400": 0, "401": 0, "403": 0,
+       "404": 0, "405": 0, "500": 0}
 
-        total_size += size
-        status_codes[status_code] += 1
+count = 0
+size = 0
 
-    except (ValueError, IndexError):
-        # Skip lines with invalid format
-        pass
+try:
+    for line in sys.stdin:
+        if count != 0 and count % 10 == 0:
+            print_statistics(stat_code_dict, size)
 
-    return total_size, status_codes
+        stlist = line.split()
+        count += 1
 
+        try:
+            size += int(stlist[-1])
+        except:
+            pass
 
-def main():
-    """This is the main function that orchestrates the execution."""
-    total_size = 0
-    status_codes = defaultdict(int)
-    line_count = 0
-
-    try:
-        for line in sys.stdin:
-            total_size, status_codes = process_line(line.strip(),
-                                                    total_size, status_codes)
-            line_count += 1
-
-            if line_count == 10:
-                print_statistics(total_size, status_codes)
-                line_count = 0
-
-    except KeyboardInterrupt:
-        print_statistics(total_size, status_codes)
+        try:
+            if stlist[-2] in stat_code_dict:
+                stat_code_dict[stlist[-2]] += 1
+        except:
+            pass
+    print_statistics(stat_code_dict, size)
 
 
-if __name__ == "__main__":
-    main()
+except KeyboardInterrupt:
+    print_statistics(stat_code_dict, size)
+    raise
